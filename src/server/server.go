@@ -44,14 +44,15 @@ func handleRequest(conn net.Conn) {
     }
     switch command {
     case "SET":
-        data[args[0]] = args[1]
+        CommandSet(args[0], args[1])
         conn.Write([]byte("+OK\r\n"))
         break;
     case "GET":
+        val := CommandGet(args[0])
         conn.Write([]byte("$"))
-        conn.Write([]byte(strconv.Itoa(len(data[args[0]]))))
+        conn.Write([]byte(strconv.Itoa(len(val))))
         conn.Write([]byte("\r\n"))
-        conn.Write([]byte(data[args[0]]))
+        conn.Write([]byte(val))
         conn.Write([]byte("\r\n"))
         break;
     }
