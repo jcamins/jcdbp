@@ -37,7 +37,7 @@ func handleRequest(conn net.Conn) {
 
     str := string(buf[:length])
     tokens := strings.Split(str, "\r\n")
-    command := tokens[2]
+    command := strings.ToUpper(tokens[2])
     args := make([]string, (len(tokens) - 3) / 2)
     for ptr := 0; ptr < len(args); ptr++ {
         args[ptr] = tokens[4 + ptr * 2]
