@@ -32,7 +32,9 @@ func handleRequest(conn net.Conn) {
         length, err := conn.Read(buf)
         if err != nil {
             conn.Close()
-            fmt.Println("Error reading: ", err.Error())
+            if (err.Error() != "EOF") {
+                fmt.Println("Error reading: ", err.Error())
+            }
             break
         }
 
@@ -57,6 +59,7 @@ func handleRequest(conn net.Conn) {
         case "QUIT":
             conn.Write([]byte("+OK\r\n"))
             conn.Close()
+            break
         }
     }
 }
