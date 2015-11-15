@@ -1,5 +1,8 @@
 package main
 
 func commandGet(key string) (val string) {
-    return data[key]
+    dataLock.RLock()
+    val = data[key]
+    dataLock.RUnlock()
+    return val
 }
