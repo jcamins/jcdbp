@@ -1,17 +1,17 @@
 package main
 
 import (
-    "sync"
+	"sync"
 )
 
 var data = make(map[string]string)
 var dataLock sync.RWMutex
 
-func Writer(writeChan <- chan WritePacket) {
-    for msg := range writeChan {
-        dataLock.Lock()
-        data[msg.key] = msg.val
-        dataLock.Unlock()
-        msg.notify <- true
-    }
+func Writer(writeChan <-chan WritePacket) {
+	for msg := range writeChan {
+		dataLock.Lock()
+		data[msg.key] = msg.val
+		dataLock.Unlock()
+		msg.notify <- true
+	}
 }
