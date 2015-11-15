@@ -27,6 +27,7 @@ func startListener() {
 
 func handleRequest(conn net.Conn) {
     buf := make([]byte, 1024)
+    channel := make(chan bool)
 
     for {
         length, err := conn.Read(buf)
@@ -47,8 +48,11 @@ func handleRequest(conn net.Conn) {
         }
         switch command {
         case "SET":
-            commandSet(args[0], args[1])
-            conn.Write([]byte("+OK\r\n"))
+            if commandSet(args[0], args[1], channel) {
+                conn.Write([]byte("+OK\r\n"))
+            } else {
+                conn.Write([]byte("-ERR\r\n"))
+            }
         case "GET":
             val := commandGet(args[0])
             conn.Write([]byte("$"))
