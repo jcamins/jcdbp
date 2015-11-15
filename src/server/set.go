@@ -1,5 +1,5 @@
 package main
 
-func CommandSet(key string, val string) {
-    data[key] = val
+func commandSet(key string, val string) {
+    writeChan <- WritePacket{key, val}
 }

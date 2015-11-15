@@ -1,6 +1,6 @@
 package main
 
-func CommandGet(key string) (val string) {
+func commandGet(key string) (val string) {
     val = data[key]
     return
 }
