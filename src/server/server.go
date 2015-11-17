@@ -10,14 +10,15 @@ import (
 )
 
 func startListener() {
-	listener, err := net.Listen("tcp", "localhost:6379")
+	addr, err := net.ResolveTCPAddr("tcp", "localhost:6379")
+	listener, err := net.ListenTCP("tcp", addr)
 	if err != nil {
 		fmt.Println("Unable to open port: ", err.Error())
 		os.Exit(1)
 	}
 	defer listener.Close()
 	for {
-		conn, err := listener.Accept()
+		conn, err := listener.AcceptTCP()
 		if err != nil {
 			fmt.Println("Error with connection: ", err.Error())
 		} else {
@@ -26,7 +27,7 @@ func startListener() {
 	}
 }
 
-func handleRequest(conn net.Conn) {
+func handleRequest(conn *net.TCPConn) {
 	buf := make([]byte, 1024)
 	channel := make(chan bool)
 
@@ -67,6 +68,9 @@ func handleRequest(conn net.Conn) {
 			conn.Write([]byte("+OK\r\n"))
 			conn.Close()
 			break
+		case "DIE":
+			conn.Write([]byte("+OK\r\n"))
+			os.Exit(0)
 		}
 	}
 }
