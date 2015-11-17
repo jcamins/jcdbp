@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net"
 	"os"
@@ -54,12 +55,14 @@ func handleRequest(conn net.Conn) {
 				conn.Write([]byte("-ERR\r\n"))
 			}
 		case "GET":
+			var wbuf bytes.Buffer
 			val := commandGet(args[0])
-			conn.Write([]byte("$"))
-			conn.Write([]byte(strconv.Itoa(len(val))))
-			conn.Write([]byte("\r\n"))
-			conn.Write([]byte(val))
-			conn.Write([]byte("\r\n"))
+			wbuf.Write([]byte("$"))
+			wbuf.Write([]byte(strconv.Itoa(len(val))))
+			wbuf.Write([]byte("\r\n"))
+			wbuf.Write([]byte(val))
+			wbuf.Write([]byte("\r\n"))
+			wbuf.WriteTo(conn)
 		case "QUIT":
 			conn.Write([]byte("+OK\r\n"))
 			conn.Close()
