@@ -11,7 +11,7 @@ import (
 var data = make(map[string]string)
 var changeCount = 0
 var dataLock sync.RWMutex
-var serializeChan = make(chan bool, 2)
+var serializeChan = make(chan bool)
 
 func WriteThread(writeChan <-chan WritePacket) {
 	for msg := range writeChan {
@@ -20,7 +20,10 @@ func WriteThread(writeChan <-chan WritePacket) {
 		data[msg.key] = msg.val
 		dataLock.Unlock()
 		if changeCount >= 100 && len(serializeChan) == 0 {
-			serializeChan <- true
+			select {
+			case serializeChan <- true:
+			default:
+			}
 		}
 		msg.notify <- true
 	}
