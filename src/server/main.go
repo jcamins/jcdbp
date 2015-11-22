@@ -8,6 +8,8 @@ type WritePacket struct {
 var writeChan = make(chan WritePacket)
 
 func main() {
+	ReadFromDisk()
 	go WriteThread(writeChan)
+	go DiskThread()
 	startListener()
 }
