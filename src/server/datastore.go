@@ -15,7 +15,6 @@ var serializeChan = make(chan bool, 2)
 
 func WriteThread(writeChan <-chan WritePacket) {
 	for msg := range writeChan {
-		log.Print("writing value")
 		dataLock.Lock()
 		changeCount++
 		data[msg.key] = msg.val
@@ -39,7 +38,6 @@ func DiskThread() {
 }
 
 func WriteToDisk() {
-	log.Print("saving to disk")
 	dataLock.Lock()
 	if changeCount == 0 {
 		dataLock.Unlock()
