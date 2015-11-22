@@ -41,8 +41,8 @@ func LoggerThread() {
 	var fileCounter int8 = 0
 	var recordCounter = 0
 	for fileCounter = 0; ; fileCounter++ {
-		_, err := os.Stat("data/datafile.log." + fmt.Sprintf("%03d", fileCounter))
-		if err != nil {
+		stat, err := os.Stat("data/datafile.log." + fmt.Sprintf("%03d", fileCounter))
+		if err != nil || stat.Size() == 0 {
 			break
 		}
 	}
@@ -59,7 +59,6 @@ func LoggerThread() {
 				logger, file = OpenLog(fileCounter)
 				recordCounter = 0
 			} else {
-				//log.Print("logging value")
 				err := logger.Encode(packet)
 				if err != nil {
 					log.Print("Error:", err)
@@ -75,7 +74,7 @@ func DiskThread() {
 		select {
 		case <-serializeChan:
 			WriteToDisk()
-		case <-time.After(time.Second * 60):
+		case <-time.After(time.Second * 10):
 			WriteToDisk()
 		}
 	}
@@ -124,6 +123,7 @@ func ReadFromDisk() {
 			dec := gob.NewDecoder(file)
 			for dec.Decode(&packet) == nil {
 				data[packet.Key] = packet.Val
+				changeCount++
 			}
 			file.Close()
 		}
