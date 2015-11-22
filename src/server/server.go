@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"net"
 	"os"
 	"strconv"
@@ -16,6 +17,7 @@ func startListener() {
 		fmt.Println("Unable to open port: ", err.Error())
 		os.Exit(1)
 	}
+	log.Print("Now listening on port 6379")
 	defer listener.Close()
 	for {
 		conn, err := listener.AcceptTCP()
